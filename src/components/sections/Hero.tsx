@@ -9,6 +9,9 @@ export function Hero() {
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="wrap hero-inner">
+        <div className="hero-photo" aria-hidden="true">
+          <img src="/images/hero-highway.jpg" alt="" width={1000} height={500} fetchPriority="high" decoding="async" />
+        </div>
         <HeroDecor />
         <span className="pill"><i>B2B</i> Freight &amp; material movement</span>
         <h1 id="hero-title">

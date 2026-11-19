@@ -2,6 +2,16 @@ import { materials } from '@/data/site';
 import { useQuote } from '@/context/QuoteContext';
 import { MaterialPic } from '@/components/illustrations/MaterialPics';
 
+// Photos: Unsplash License (free for commercial use) — xing bowen, Crystal Kwok, Tim Johnson,
+// CPG.IO, Arno Senoner. "Something else" keeps its icon since it's an open-ended choice.
+const photos: Partial<Record<(typeof materials)[number]['id'], string>> = {
+  industrial: '/images/mat-industrial.jpg',
+  machinery: '/images/mat-machinery.jpg',
+  construction: '/images/mat-construction.jpg',
+  packaged: '/images/mat-packaged.jpg',
+  retail: '/images/mat-retail.jpg',
+};
+
 export function Materials() {
   const { requestMaterial } = useQuote();
   return (
@@ -16,7 +26,11 @@ export function Materials() {
           {materials.map((m) => {
             return (
               <button key={m.id} type="button" className="cat" onClick={() => requestMaterial(m.value)}>
-                <span className="pic" aria-hidden="true"><MaterialPic id={m.id} /></span>
+                <span className={photos[m.id] ? 'pic pic--photo' : 'pic'} aria-hidden="true">
+                  {photos[m.id]
+                    ? <img src={photos[m.id]} alt="" loading="lazy" decoding="async" />
+                    : <MaterialPic id={m.id} />}
+                </span>
                 <span>
                   <b>{m.title}</b>
                   <small>{m.hint}</small>

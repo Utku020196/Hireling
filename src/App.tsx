@@ -16,6 +16,7 @@ import { NotFound } from '@/components/blog/NotFound';
 import { blogMeta } from '@/data/blog';
 import { company } from '@/data/site';
 import { resolveRoute, type Route } from '@/lib/route';
+import { useReveal } from '@/hooks/useReveal';
 
 function pageMeta(route: Route) {
   switch (route.name) {
@@ -48,6 +49,7 @@ function Home() {
 
 export default function App() {
   const route = useMemo(() => resolveRoute(window.location.pathname), []);
+  useReveal();
 
   // Static HTML already carries the right tags in production; this covers dev and client-only loads.
   useEffect(() => {
