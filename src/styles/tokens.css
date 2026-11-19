@@ -1,0 +1,43 @@
+/* Design tokens. Light by default, dark via OS preference or [data-theme="dark"]. */
+:root {
+  --bg: #ffffff; --surface: #ffffff; --mist: #f4f5f7; --line: #e6e8ec;
+  --ink: #121826; --ink-2: #3b4453; --mute: #5f6878;
+  --accent: #e8590c; --accent-ink: #b8460a; --accent-soft: #fff1e7;
+  --mint: #12805c; --danger: #c0392b;
+  --sky-1: #ffd9bf; --sky-2: #ffe9da; --sky-3: #f3ecff;
+  --hill-1: #f6d6c2; --hill-2: #eebd9f; --hill-3: #d98f68; --hill-4: #a85a3b; --hill-5: #5d3426;
+  --road: #2a2f3a; --road-line: #ffe2c9;
+  --shadow: 0 24px 60px -32px rgba(30, 20, 10, 0.35);
+  --header-bg: rgba(255, 255, 255, 0.86);
+  --header-h: 68px;
+  --font: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0e1117; --surface: #161a22; --mist: #1e232d; --line: #2a303b;
+    --ink: #f2f4f7; --ink-2: #c6ccd6; --mute: #9aa3b2;
+    --accent: #ff7a2f; --accent-ink: #ff9a5c; --accent-soft: #2b1a10;
+    --mint: #3fcf98; --danger: #ff6b5b;
+    --sky-1: #2a1c2c; --sky-2: #1d1a2a; --sky-3: #141826;
+    --hill-1: #3a2630; --hill-2: #4a2c2c; --hill-3: #5b3326; --hill-4: #40241c; --hill-5: #24150f;
+    --road: #0b0d12; --road-line: #7a5a44;
+    --shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.7);
+    --header-bg: rgba(14, 17, 23, 0.82);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #0e1117; --surface: #161a22; --mist: #1e232d; --line: #2a303b;
+  --ink: #f2f4f7; --ink-2: #c6ccd6; --mute: #9aa3b2;
+  --accent: #ff7a2f; --accent-ink: #ff9a5c; --accent-soft: #2b1a10;
+  --mint: #3fcf98; --danger: #ff6b5b;
+  --sky-1: #2a1c2c; --sky-2: #1d1a2a; --sky-3: #141826;
+  --hill-1: #3a2630; --hill-2: #4a2c2c; --hill-3: #5b3326; --hill-4: #40241c; --hill-5: #24150f;
+  --road: #0b0d12; --road-line: #7a5a44;
+  --shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.7);
+  --header-bg: rgba(14, 17, 23, 0.82);
+  color-scheme: dark;
+}
