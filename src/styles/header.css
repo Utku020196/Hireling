@@ -1,15 +1,40 @@
+/* Header: full-width bar at the top of the page that morphs into a floating
+   dark pill once the page scrolls (all states animate with one spring ease). */
 .hdr {
-  position: fixed; inset: 0 0 auto; z-index: 50;
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --pill-bg: rgba(18, 18, 20, 0.86);
+  --pill-ink: #ffffff;
+  --pill-mute: rgba(255, 255, 255, 0.78);
+  position: fixed; top: 0; left: 50%; z-index: 50;
+  width: 100%;
+  transform: translateX(-50%);
   padding-top: env(safe-area-inset-top, 0px);
-  transition: background 0.25s, border-color 0.25s;
-  border-bottom: 1px solid transparent;
+  border: 1px solid transparent; border-width: 0 0 1px;
+  transition:
+    top 0.45s var(--ease-spring), width 0.45s var(--ease-spring),
+    border-radius 0.45s var(--ease-spring), background-color 0.45s var(--ease-spring),
+    border-color 0.45s var(--ease-spring), box-shadow 0.45s var(--ease-spring),
+    padding 0.45s var(--ease-spring);
 }
-.hdr.is-scrolled, .hdr.is-open {
-  background: var(--header-bg);
-  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-  border-bottom-color: var(--line);
+.hdr.is-open { background: var(--header-bg); border-bottom-color: var(--line); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+
+.hdr.is-scrolled {
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  width: min(1040px, 100% - 24px);
+  padding-top: 0;
+  border-width: 1px; border-radius: 28px;
+  border-color: rgba(255, 255, 255, 0.14);
+  background: var(--pill-bg);
+  backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.32), 0 0 24px color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--pill-ink);
 }
-.nav { height: var(--header-h); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+@media (min-width: 640px) { .hdr.is-scrolled { top: 16px; width: min(1040px, 100% - 32px); } }
+
+.nav { height: var(--header-h); display: flex; align-items: center; justify-content: space-between; gap: 16px; transition: height 0.45s var(--ease-spring), padding 0.45s var(--ease-spring); }
+.hdr.is-scrolled .nav { height: 58px; max-width: none; padding: 0 8px 0 18px; }
+@media (min-width: 640px) { .hdr.is-scrolled .nav { padding: 0 10px 0 22px; } }
+
 .brand { display: flex; align-items: center; gap: 10px; }
 .brand b { font-size: 19px; font-weight: 650; letter-spacing: -0.01em; }
 .brand small { display: block; font-size: 11.5px; color: var(--mute); font-weight: 500; letter-spacing: 0.02em; margin-top: -3px; }
@@ -26,16 +51,63 @@
 @keyframes logo-spin { to { stroke-dashoffset: -22.6; } }
 @keyframes logo-speed { 0% { transform: translateX(0); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateX(-6px); opacity: 0; } }
 
-.links { display: none; gap: 28px; font-size: 14.5px; font-weight: 500; color: var(--ink-2); }
-.links a:hover { color: var(--ink); }
-.actions { display: none; gap: 8px; align-items: center; }
+.links { display: none; gap: clamp(20px, 2.4vw, 32px); font-size: 14.5px; font-weight: 500; color: var(--ink-2); }
+.links a { position: relative; transition: color 0.2s; }
+.links a::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -6px; height: 1.5px; border-radius: 2px;
+  background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.3s var(--ease-spring);
+}
+.links a:hover, .links a:focus-visible, .links a[aria-current='page'] { color: var(--accent); }
+.links a:hover::after, .links a:focus-visible::after, .links a[aria-current='page']::after { transform: scaleX(1); }
+
+.actions { display: none; gap: 18px; align-items: center; }
+.nav-call { display: inline-flex; align-items: center; gap: 7px; font-size: 14.5px; font-weight: 500; color: var(--ink-2); transition: color 0.2s; }
+.nav-call:hover, .nav-call:focus-visible { color: var(--accent); }
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+  min-height: 42px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--ink);
+  background: var(--ink); color: var(--bg);
+  font-size: 13px; font-weight: 650; letter-spacing: 0.05em; text-transform: uppercase;
+  transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.3s var(--ease-spring);
+}
+.nav-cta svg { transition: transform 0.3s var(--ease-spring); }
+.nav-cta:hover, .nav-cta:focus-visible { background: var(--accent); border-color: var(--accent); color: #1a0d04; }
+.nav-cta:hover svg, .nav-cta:focus-visible svg { transform: translate(2px, -2px); }
+
 .menu-btn {
   display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 12px;
   border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
 }
 .mobile { border-top: 1px solid var(--line); background: var(--surface); padding: 8px 16px 20px; }
 .mobile a.row { display: block; padding: 14px 0; border-bottom: 1px solid var(--line); font-weight: 500; font-size: 16px; }
+.mobile a.row[aria-current='page'] { color: var(--accent); }
 .mobile .btn { width: 100%; margin-top: 14px; }
+
+/* Pill (scrolled) colours */
+.hdr.is-scrolled .brand b { color: var(--pill-ink); }
+.hdr.is-scrolled .brand small { color: rgba(255, 255, 255, 0.55); }
+.hdr.is-scrolled .mark { background: #fff; color: #121826; }
+.hdr.is-scrolled .links, .hdr.is-scrolled .nav-call { color: var(--pill-mute); }
+.hdr.is-scrolled .links a:hover, .hdr.is-scrolled .links a:focus-visible,
+.hdr.is-scrolled .links a[aria-current='page'], .hdr.is-scrolled .nav-call:hover { color: var(--accent); }
+.hdr.is-scrolled .nav-cta {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent); color: #fff;
+}
+.hdr.is-scrolled .nav-cta:hover, .hdr.is-scrolled .nav-cta:focus-visible {
+  background: var(--accent); border-color: var(--accent); color: #1a0d04; transform: translateY(-1px);
+}
+.hdr.is-scrolled .menu-btn { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.16); color: #fff; }
+.hdr.is-scrolled .mobile { background: transparent; border-top-color: rgba(255, 255, 255, 0.12); padding: 4px 18px 18px; }
+.hdr.is-scrolled .mobile a.row { color: var(--pill-ink); border-bottom-color: rgba(255, 255, 255, 0.08); }
+.hdr.is-scrolled .mobile .btn { background: var(--accent); color: #1a0d04; }
+
+/* Mid-size desktops: drop the tagline and the phone label so the pill stays on one line. */
+@media (min-width: 980px) and (max-width: 1180px) {
+  .hdr.is-scrolled .brand small, .hdr.is-scrolled .nav-call span { display: none; }
+}
+
 @media (min-width: 980px) {
   .links, .actions { display: flex; }
   .menu-btn, .mobile { display: none !important; }

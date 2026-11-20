@@ -1,0 +1,98 @@
+/* Motion layer: entrance, scroll reveal, hover and ambient animation.
+   Everything collapses under prefers-reduced-motion (see base.css). */
+
+:root { --ease-out: cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* ---- Hero entrance (pure CSS, runs on first paint) ---- */
+@keyframes rise { from { opacity: 0; translate: 0 18px; } to { opacity: 1; translate: 0 0; } }
+.hero-inner > .pill { animation: rise 0.7s var(--ease-out) 0.05s both; }
+.hero-inner > h1 { animation: rise 0.8s var(--ease-out) 0.15s both; }
+.hero-inner > .lead { animation: rise 0.8s var(--ease-out) 0.28s both; }
+.hero-inner > .cta-row { animation: rise 0.8s var(--ease-out) 0.4s both; }
+.hero .preview { animation: rise 1s var(--ease-out) 0.55s both; }
+.hero-deco { animation: fade-in 1.4s ease 0.6s both; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Highlighted words get an underline that draws in */
+.hero h1 em { background: linear-gradient(var(--accent), var(--accent)) no-repeat 0 92% / 0% 0.08em; animation: underline 0.9s var(--ease-out) 0.9s forwards; }
+@keyframes underline { to { background-size: 100% 0.08em; } }
+
+/* Pill badge shimmer */
+.pill i { position: relative; overflow: hidden; }
+.pill i::after {
+  content: ''; position: absolute; inset: 0; translate: -120% 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%);
+  animation: shimmer 3.2s ease-in-out 1.2s infinite;
+}
+@keyframes shimmer { 0%, 60% { translate: -120% 0; } 100% { translate: 120% 0; } }
+
+/* ---- Scroll reveal (classes added by useReveal) ---- */
+.reveal {
+  opacity: 0; translate: 0 28px;
+  transition: opacity 0.7s var(--ease-out), translate 0.7s var(--ease-out), transform 0.2s, border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  transition-delay: var(--rd, 0ms), var(--rd, 0ms), 0s, 0s, 0s, 0s;
+}
+.reveal.is-in { opacity: 1; translate: 0 0; }
+.bigmark span.reveal { translate: 0 40%; transition-duration: 1.2s; }
+.bigmark span.reveal.is-in { translate: 0 0; }
+
+/* ---- Preview panel ---- */
+.dot.is-now { position: relative; }
+.dot.is-now::after {
+  content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--accent);
+  animation: ping 1.8s var(--ease-out) infinite;
+}
+@keyframes ping { 0% { opacity: 0.7; scale: 0.8; } 100% { opacity: 0; scale: 1.7; } }
+.stk.mini .bar span { animation: fill 3.6s var(--ease-out) infinite; }
+@keyframes fill { 0% { width: 8%; } 60%, 100% { width: 100%; } }
+.avatar { animation: breathe 3.4s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { box-shadow: 0 0 0 0 var(--accent-soft); } 50% { box-shadow: 0 0 0 6px var(--accent-soft); } }
+.mini-field { transition: border-color 0.2s, translate 0.2s; }
+.mini-field:hover { border-color: var(--accent); translate: 3px 0; }
+
+/* ---- Buttons ---- */
+.btn svg { transition: translate 0.2s var(--ease-out); }
+.btn:hover svg:last-child { translate: 3px 0; }
+.btn-ink:hover, .band .btn:hover { box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--accent) 70%, transparent); }
+
+/* ---- Services ---- */
+:where(.svc .card, .steps li) { transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; }
+.svc .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.art img { transition: scale 0.7s var(--ease-out); }
+.svc .card:hover .art img { scale: 1.06; }
+
+/* ---- Materials ---- */
+.cat .pic svg { transition: scale 0.4s var(--ease-out), rotate 0.4s var(--ease-out); }
+.cat:hover .pic svg { scale: 1.08; rotate: -3deg; }
+.cat .pic img { transition: scale 0.6s var(--ease-out); }
+.cat:hover .pic img { scale: 1.08; }
+.cat:active { transform: translateY(0) scale(0.98); }
+
+/* ---- Process ---- */
+.steps li:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: var(--shadow); }
+.steps .n { transition: background 0.25s, color 0.25s, rotate 0.4s var(--ease-out); }
+.steps li:hover .n { background: var(--accent); color: #fff; rotate: -8deg; }
+.steps li.reveal .n { scale: 0.6; transition: scale 0.6s var(--ease-out) calc(var(--rd, 0ms) + 0.15s), background 0.25s, color 0.25s, rotate 0.4s var(--ease-out); }
+.steps li.reveal.is-in .n { scale: 1; }
+
+/* ---- FAQ ---- */
+.qa summary { transition: color 0.2s; }
+.qa summary:hover { color: var(--accent-ink); }
+.qa details[open] p { animation: rise 0.45s var(--ease-out) both; }
+
+/* ---- Contact band: drifting glow ---- */
+.band > * { position: relative; z-index: 1; }
+.band::before {
+  content: ''; position: absolute; width: 520px; height: 520px; right: -160px; top: -200px; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 38%, transparent), transparent 65%);
+  animation: drift 14s ease-in-out infinite alternate; pointer-events: none;
+}
+@keyframes drift { from { translate: 0 0; } to { translate: -260px 220px; } }
+.band .lines a { transition: border-color 0.2s, translate 0.2s var(--ease-out), background 0.2s; }
+.band .lines a:hover { translate: 4px 0; background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.band .lines a svg { transition: translate 0.2s var(--ease-out); }
+.band .lines a:hover svg { translate: 2px -2px; }
+
+/* Hero photo: slow Ken Burns drift */
+.hero-photo img { transform-origin: 40% 60%; animation: kenburns 28s ease-in-out infinite alternate, fade-in 1.2s ease both; }
+@keyframes kenburns { from { scale: 1.04; translate: 0 0; } to { scale: 1.16; translate: -2% -1.5%; } }

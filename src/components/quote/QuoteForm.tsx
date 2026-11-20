@@ -7,6 +7,7 @@ import {
 import { submitQuote } from '@/lib/submitQuote';
 import { company } from '@/data/site';
 import { mailHref } from '@/lib/contact';
+import { PinIcon, PlusIcon } from '@/components/icons/Icons';
 import { Field } from './Field';
 import { QuoteSummary } from './QuoteSummary';
 
@@ -19,6 +20,8 @@ export function QuoteForm() {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
+  const [showNotes, setShowNotes] = useState(false);
+  const notesRef = useRef<HTMLTextAreaElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const materialRef = useRef<HTMLInputElement>(null);
   const honeypot = useRef<HTMLInputElement>(null);
@@ -52,9 +55,10 @@ export function QuoteForm() {
     const found = validateQuote(values);
     setErrors(found);
     setAttempted(true);
-    const firstInvalid = Object.keys(found)[0];
-    if (firstInvalid) {
-      formRef.current?.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus();
+    if (Object.keys(found).length) {
+      // Focus the first invalid field in visual (DOM) order.
+      const fields = Array.from(formRef.current?.elements ?? []) as HTMLInputElement[];
+      fields.find((el) => el.name in found)?.focus();
       return;
     }
     setSending(true);
@@ -75,6 +79,7 @@ export function QuoteForm() {
     setAttempted(false);
     setSendError(null);
     setSubmitted(false);
+    setShowNotes(false);
     requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('input')?.focus());
   };
 
@@ -97,7 +102,39 @@ export function QuoteForm() {
   return (
     <form ref={formRef} onSubmit={onSubmit} noValidate aria-labelledby="quote-title" aria-busy={sending}>
       <fieldset className="fs">
-        <legend>Your business</legend>
+        <legend><span className="step" aria-hidden="true">1</span>The load</legend>
+        <div className="fgrid">
+          <Field label="Pickup location" required error={errors.pickup} icon={<PinIcon className="f-ico is-from" />}>
+            <input {...input('pickup', { placeholder: 'City or address' })} />
+          </Field>
+          <Field label="Drop location" required error={errors.drop} icon={<PinIcon className="f-ico is-to" />}>
+            <input {...input('drop', { placeholder: 'City or address' })} />
+          </Field>
+          <Field label="Material / goods" required error={errors.material}>
+            <input ref={materialRef} {...input('material', { placeholder: 'e.g. steel coils, cement' })} />
+          </Field>
+          <Field label="Weight or quantity">
+            <input {...input('qty', { placeholder: 'e.g. 12 tonnes, 20 pallets' })} />
+          </Field>
+          <Field label="Required date" required error={errors.date}>
+            <input {...input('date', { type: 'date', min: todayISO() })} />
+          </Field>
+          <fieldset className="f seg-f">
+            <legend>Movement type</legend>
+            <div className="seg">
+              {movementTypes.map((t) => (
+                <label key={t}>
+                  <input type="radio" name="type" value={t} checked={values.type === t} onChange={onChange} />
+                  <span>{t}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        </div>
+      </fieldset>
+
+      <fieldset className="fs">
+        <legend><span className="step" aria-hidden="true">2</span>Your details</legend>
         <div className="fgrid">
           <Field label="Company name" required error={errors.company}>
             <input {...input('company', { autoComplete: 'organization' })} />
@@ -112,41 +149,22 @@ export function QuoteForm() {
             <input {...input('phone', { type: 'tel', autoComplete: 'tel', inputMode: 'tel' })} />
           </Field>
         </div>
-      </fieldset>
-
-      <fieldset className="fs">
-        <legend>The movement</legend>
-        <div className="fgrid">
-          <Field label="Pickup location" required error={errors.pickup}>
-            <input {...input('pickup', { placeholder: 'Address or city' })} />
+        {showNotes || values.notes ? (
+          <Field label="Anything else we should know?" className="f-notes">
+            <textarea ref={notesRef} {...input('notes', { rows: 3, placeholder: 'Loading help, special handling, vehicle preference…' })} />
           </Field>
-          <Field label="Drop location" required error={errors.drop}>
-            <input {...input('drop', { placeholder: 'Address or city' })} />
-          </Field>
-          <Field label="Required date" required error={errors.date}>
-            <input {...input('date', { type: 'date', min: todayISO() })} />
-          </Field>
-          <Field label="Movement type">
-            <select {...input('type')}>
-              {movementTypes.map((t) => <option key={t}>{t}</option>)}
-            </select>
-          </Field>
-        </div>
-      </fieldset>
-
-      <fieldset className="fs">
-        <legend>The material</legend>
-        <div className="fgrid">
-          <Field label="Material / goods" required error={errors.material}>
-            <input ref={materialRef} {...input('material', { placeholder: 'What’s being moved' })} />
-          </Field>
-          <Field label="Approx. weight or quantity">
-            <input {...input('qty', { placeholder: 'e.g. tonnes, pallets, units' })} />
-          </Field>
-        </div>
-        <Field label="Anything else we should know?">
-          <textarea {...input('notes', { placeholder: 'Loading help, special handling, vehicle preference…' })} />
-        </Field>
+        ) : (
+          <button
+            type="button"
+            className="add-note"
+            onClick={() => {
+              setShowNotes(true);
+              requestAnimationFrame(() => notesRef.current?.focus());
+            }}
+          >
+            <PlusIcon /> Add a note <span>(optional)</span>
+          </button>
+        )}
       </fieldset>
 
       {/* Honeypot: hidden from people and assistive tech, catches naive bots. */}

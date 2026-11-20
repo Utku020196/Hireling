@@ -2,11 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { company, navLinks, primaryPhone } from '@/data/site';
 import { telHref } from '@/lib/contact';
 import { useScrolled } from '@/hooks/useScrolled';
-import { CloseIcon, MenuIcon } from '@/components/icons/Icons';
+import { ArrowUpRightIcon, CloseIcon, MenuIcon, PhoneIcon } from '@/components/icons/Icons';
 import { Logo } from './Logo';
 
 export function Header({ current = 'home' }: { current?: 'home' | 'blog' }) {
-  const scrolled = useScrolled();
+  const scrolled = useScrolled(24);
   const [open, setOpen] = useState(false);
   const menuBtn = useRef<HTMLButtonElement>(null);
   const close = useCallback(() => setOpen(false), []);
@@ -52,8 +52,14 @@ export function Header({ current = 'home' }: { current?: 'home' | 'blog' }) {
         </nav>
 
         <div className="actions">
-          <a className="btn btn-line btn-sm" href={telHref(primaryPhone)}>Call us</a>
-          <a className="btn btn-ink btn-sm" href="/#quote">Request a quote</a>
+          <a className="nav-call" href={telHref(primaryPhone)}>
+            <PhoneIcon size={15} />
+            <span>Call us</span>
+          </a>
+          <a className="nav-cta" href="/#quote">
+            <span>Request a quote</span>
+            <ArrowUpRightIcon size={15} />
+          </a>
         </div>
 
         <button
