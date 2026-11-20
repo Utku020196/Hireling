@@ -1,16 +1,18 @@
-import { useId, type ReactElement, cloneElement } from 'react';
+import { useId, type ReactElement, type ReactNode, cloneElement } from 'react';
 
 interface FieldProps {
   label: string;
   required?: boolean;
   error?: string;
   className?: string;
+  /** Optional leading icon shown inside the control. */
+  icon?: ReactNode;
   /** A single <input>, <select> or <textarea>; id/aria props are wired automatically. */
   children: ReactElement<Record<string, unknown>>;
 }
 
 /** Label + control + inline error, with correct id/aria wiring. */
-export function Field({ label, required, error, className, children }: FieldProps) {
+export function Field({ label, required, error, className, icon, children }: FieldProps) {
   const id = useId();
   const errorId = `${id}-error`;
   const control = cloneElement(children, {
@@ -26,7 +28,7 @@ export function Field({ label, required, error, className, children }: FieldProp
         {label}
         {required && <span className="req" aria-hidden="true">*</span>}
       </label>
-      {control}
+      {icon ? <span className="f-ctl">{icon}{control}</span> : control}
       {error && (
         <span id={errorId} className="f-error">
           {error}

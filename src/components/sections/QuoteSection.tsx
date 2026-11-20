@@ -2,6 +2,7 @@ import { company, quoteBenefits } from '@/data/site';
 import { telHref } from '@/lib/contact';
 import { CheckIcon } from '@/components/icons/Icons';
 import { QuoteForm } from '@/components/quote/QuoteForm';
+import { QuoteVideo } from '@/components/quote/QuoteVideo';
 
 export function QuoteSection() {
   const [p1, p2] = company.phones;
@@ -10,7 +11,8 @@ export function QuoteSection() {
       <div className="wrap">
         <div className="quote-wrap">
           <div className="quote">
-            <div className="quote-side">
+            <div className="quote-side has-video">
+              <QuoteVideo />
               <p className="eyebrow">Request a quote</p>
               <h2 id="quote-title" className="h2">Tell us what needs to move.</h2>
               <p className="sub">The more detail you share, the more accurate your quotation.</p>
